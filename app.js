@@ -15,7 +15,7 @@ app.get('/pathgen', function (req, res) {
 var lat_org = 241.8149828910;
 var lng_org = 33.83705690642;
 
-var move = seq_gen() / 1000;
+var move = seq_gen()/1000;
 // console.log(move);
 
 var lat = lat_org + move;
