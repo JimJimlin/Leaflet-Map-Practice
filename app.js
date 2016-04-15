@@ -12,10 +12,10 @@ app.get('/', function(req, res) {
 });
 
 app.get('/pathgen', function (req, res) {
-var lat_org = 241.8149828910;
-var lng_org = 33.83705690642;
+var lat_org = 121.4953565597534;
+var lng_org = 25.012117536458376;
 
-var move = seq_gen() / 1000;
+var move = seq_gen()/100;
 // console.log(move);
 
 var lat = lat_org + move;
@@ -33,7 +33,7 @@ res.send(JSON.stringify(geojson));
 
 function seq_gen() {
     var d = new Date();
-    var sec = Math.round(d.getTime() / 1000) % 1000;
+    var sec = Math.round(d.getTime() / 1000) % 100;
     return sec;
 }
 

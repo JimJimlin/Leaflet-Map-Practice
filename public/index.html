@@ -8,8 +8,10 @@
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <link rel="stylesheet" href="../dist/leaflet.awesome-markers.css">
     <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="MarkerCluster.css"/>
 
     <script src="index.js"></script>
+    <script src="app.js"></script>
 
     <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
     <script src="../dist/leaflet-realtime.js"></script>
@@ -25,19 +27,46 @@
 
     <script type="text/javascript" src="../MovingMarker.js"></script>
 
+    <script src="leaflet.markercluster.js"></script>
+
 </head>
 <body>
-    <div id="map" style="width: 800px; height: 600px"></div>
+    <div id="map" position="relative" style="width: 1260px; height: 700px"></div>
     
     <script>
 
-        var map = L.map('map').setView([23, 120], 1),realtime = L.realtime({
-        url: 'https://wanderdrone.appspot.com/',
+        var map = L.map('map').setView([25.04028063064491, 121.5577727821931], 13),realtime = L.realtime({
+        url: '/pathgen',
         crossOrigin: true,
         type: 'json'
         }, {
         interval: 3 * 1000
         }).addTo(map);
+
+
+        realtime.on('update', function(e) {
+
+        var coordPart = function(v, dirs) {
+            return dirs.charAt(v >= 0 ? 0 : 1) +
+                (Math.round(Math.abs(v) * 100) / 100).toString();
+        },
+        popupContent = function(fId) {
+            var feature = e.features[fId],
+                c = feature.geometry.coordinates;
+            return 'Wander drone at ' +
+                coordPart(c[1], 'NS') + ', ' + coordPart(c[0], 'EW');
+        },
+        bindFeaturePopup = function(fId) {
+            realtime.getLayer(fId).bindPopup(popupContent(fId));
+        },
+        updateFeaturePopup = function(fId) {
+            realtime.getLayer(fId).getPopup().setContent(popupContent(fId));
+        };
+
+        Object.keys(e.enter).forEach(bindFeaturePopup);
+        Object.keys(e.update).forEach(updateFeaturePopup);
+
+        });
 
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpandmbXliNDBjZWd2M2x6bDk3c2ZtOTkifQ._QA7i5Mpkd_m30IGElHziw', {
             maxZoom: 18,
@@ -52,38 +81,39 @@
         markerColor: 'blue',
         });
 
-        $.getJSON("TAIPEI_Shelters.json",function(data){
+        $.getJSON("http://yuchenglin.github.io/taipei_volunteer_location.json",function(data){
 
-            L.geoJson(data,{
+            var test = L.geoJson(data,{
                 pointToLayer: function(feature,latlng){
 
                 var marker = L.marker(latlng,{icon: ManMarker});
-                marker.bindPopup(feature.properties.name + '<br/>' + feature.geometry.coordinates);
+                marker.bindPopup('Hi, I am here');
                 return marker;
 
                 }   
+
+
             }).addTo(map);
+
+            
+        var clusters = L.markerClusterGroup();
+        clusters.addLayer(test);
+        map.addLayer(clusters);
         
         });
 
-        $.getJSON("http://yuchenglin.github.io/geo-generator",function(hooddata){
+        $.getJSON("http://yuchenglin.github.io/taipei_tour_planning.json",function(hooddata){
 
-            L.geoJson(hooddata).addTo(map);
+            L.geoJson(hooddata,{color: 'red'}).addTo(map);
 
         });
 
-        
-
-
-        var parisKievLL = [[48.8567, 2.3508], [50.45, 30.523333]];
-        var londonParisRomeBerlinBucarest = [[51.507222, -0.1275], [48.8567, 2.3508], 
-        [41.9, 12.5], [52.516667, 13.383333], [44.4166,26.1]];
-
-        L.polyline(parisKievLL).addTo(map);
-        L.polyline(londonParisRomeBerlinBucarest, {color: 'red'}).addTo(map);
-
-        L.Marker.movingMarker(parisKievLL, [100000]).addTo(map);
-
+        //var parisKievLL = [[48.8567, 2.3508], [50.45, 30.523333]];
+        //var londonParisRomeBerlinBucarest = [[51.507222, -0.1275], [48.8567, 2.3508], 
+        //[41.9, 12.5], [52.516667, 13.383333], [44.4166,26.1]];
+        //L.polyline(parisKievLL).addTo(map);
+        //L.polyline(londonParisRomeBerlinBucarest, {color: 'red'}).addTo(map);
+        //L.Marker.movingMarker(parisKievLL, [100000]).addTo(map);
         //var marker2 = L.Marker.movingMarker(londonParisRomeBerlinBucarest,
         //[500, 500, 500, 500], {autostart: true}).addTo(map);
         //L.polyline(londonParisRomeBerlinBucarest, {color: 'red'}).addTo(map);
