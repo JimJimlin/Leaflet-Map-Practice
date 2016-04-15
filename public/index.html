@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <link rel="stylesheet" href="../dist/leaflet.awesome-markers.css">
     <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link rel="stylesheet" href="MarkerCluster.css"/>
 
     <script src="index.js"></script>
     <script src="app.js"></script>
@@ -26,13 +27,15 @@
 
     <script type="text/javascript" src="../MovingMarker.js"></script>
 
+    <script src="leaflet.markercluster.js"></script>
+
 </head>
 <body>
     <div id="map" position="relative" style="width: 1260px; height: 700px"></div>
     
     <script>
 
-        var map = L.map('map').setView([25.04028063064491, 121.5577727821931], 12),realtime = L.realtime({
+        var map = L.map('map').setView([25.04028063064491, 121.5577727821931], 13),realtime = L.realtime({
         url: '/pathgen',
         crossOrigin: true,
         type: 'json'
@@ -80,7 +83,7 @@
 
         $.getJSON("http://yuchenglin.github.io/taipei_volunteer_location.json",function(data){
 
-            L.geoJson(data,{
+            var test = L.geoJson(data,{
                 pointToLayer: function(feature,latlng){
 
                 var marker = L.marker(latlng,{icon: ManMarker});
@@ -88,7 +91,14 @@
                 return marker;
 
                 }   
+
+
             }).addTo(map);
+
+            
+        var clusters = L.markerClusterGroup();
+        clusters.addLayer(test);
+        map.addLayer(clusters);
         
         });
 
@@ -97,9 +107,6 @@
             L.geoJson(hooddata,{color: 'red'}).addTo(map);
 
         });
-
-        
-
 
         //var parisKievLL = [[48.8567, 2.3508], [50.45, 30.523333]];
         //var londonParisRomeBerlinBucarest = [[51.507222, -0.1275], [48.8567, 2.3508], 
