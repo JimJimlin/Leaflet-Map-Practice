@@ -32,7 +32,7 @@
     
     <script>
 
-        var map = L.map('map').setView([23, 120], 5),realtime = L.realtime({
+        var map = L.map('map').setView([25.04028063064491, 121.5577727821931], 12),realtime = L.realtime({
         url: '/pathgen',
         crossOrigin: true,
         type: 'json'
@@ -58,13 +58,13 @@
         markerColor: 'blue',
         });
 
-        $.getJSON("TAIPEI_Shelters.json",function(data){
+        $.getJSON("http://yuchenglin.github.io/taipei_volunteer_location.json",function(data){
 
             L.geoJson(data,{
                 pointToLayer: function(feature,latlng){
 
                 var marker = L.marker(latlng,{icon: ManMarker});
-                marker.bindPopup(feature.properties.name + '<br/>' + feature.geometry.coordinates);
+                marker.bindPopup('Hi, I am here');
                 return marker;
 
                 }   
@@ -72,11 +72,14 @@
         
         });
 
-        //$.getJSON("/pathgen",function(hooddata){
+        $.getJSON("http://yuchenglin.github.io/taipei_tour_planning.json",function(hooddata){
 
-            //L.geoJson(hooddata).addTo(map);
+            L.geoJson(hooddata,{color: 'red'}).addTo(map);
 
-        //});
+        });
+
+        
+
 
         //var parisKievLL = [[48.8567, 2.3508], [50.45, 30.523333]];
         //var londonParisRomeBerlinBucarest = [[51.507222, -0.1275], [48.8567, 2.3508], 
@@ -95,6 +98,7 @@
         //});
 
     </script>
+
     
 </body>
 </html>

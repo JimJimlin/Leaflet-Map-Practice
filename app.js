@@ -12,10 +12,10 @@ app.get('/', function(req, res) {
 });
 
 app.get('/pathgen', function (req, res) {
-var lat_org = 241.8149828910;
-var lng_org = 33.83705690642;
+var lat_org = 121.5577727821931;
+var lng_org = 25.04028063064491;
 
-var move = seq_gen()/1000;
+var move = seq_gen()/10000;
 // console.log(move);
 
 var lat = lat_org + move;
